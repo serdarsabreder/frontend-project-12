@@ -1,0 +1,24 @@
+name: lint
+
+on: push
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm --prefix frontend install
+
+      - name: Run linter
+        run: make lint
+
+      - name: Build project
+        run: make build

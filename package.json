@@ -1,0 +1,24 @@
+{
+  "name": "@hexlet/code",
+  "version": "1.0.0",
+  "description": "Hexlet Chat",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm --prefix frontend install && npm --prefix frontend run build",
+    "start": "npx start-server -s ./frontend/dist -p ${PORT:-5001}"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serdarsabreder/frontend-project-12.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/serdarsabreder/frontend-project-12/issues"
+  },
+  "homepage": "https://github.com/serdarsabreder/frontend-project-12#readme",
+  "dependencies": {
+    "@hexlet/chat-server": "^2.0.4"
+  }
+}
