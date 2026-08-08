@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { setCredentials } from '../slices/authSlice.js';
+import routes from '../services/routes.js';
 
 const validationSchema = yup.object({
   username: yup.string().trim().required('Обязательное поле'),
@@ -23,7 +24,7 @@ function LoginPage() {
     validationSchema,
     onSubmit: async (values, { setStatus }) => {
       try {
-        const { data } = await axios.post('/api/v1/login', values);
+        const { data } = await axios.post(routes.loginPath(), values);
         dispatch(setCredentials(data));
         navigate('/');
       } catch {
