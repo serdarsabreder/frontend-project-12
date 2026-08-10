@@ -1,40 +1,92 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Alert, Button, Spinner } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Channels from '../components/Channels.jsx';
 import Header from '../components/Header.jsx';
 import MessageForm from '../components/MessageForm.jsx';
 import Messages from '../components/Messages.jsx';
 import { fetchChannels } from '../slices/channelsSlice.js';
-import { fetchMessages } from '../slices/messagesSlice.js';
+import { addMessageReceived, fetchMessages } from '../slices/messagesSlice.js';
+import { socket } from '../services/socket.js';
 
 function ChatPage() {
   const dispatch = useDispatch();
+  const [isOnline, setIsOnline] = useState(socket.connected);
   const channels = useSelector((state) => state.channels.channels);
+  const channelsLoading = useSelector((state) => state.channels.loading);
+  const channelsError = useSelector((state) => state.channels.error);
   const currentChannelId = useSelector((state) => state.channels.currentChannelId);
   const messages = useSelector((state) => state.messages.messages);
+  const messagesLoading = useSelector((state) => state.messages.loading);
+  const messagesError = useSelector((state) => state.messages.error);
+
+  useEffect(() => {
+    const handleNewMessage = (message) => dispatch(addMessageReceived(message));
+    const handleConnect = () => setIsOnline(true);
+    const handleDisconnect = () => setIsOnline(false);
+
+    socket.on('newMessage', handleNewMessage);
+    socket.on('connect', handleConnect);
+    socket.on('disconnect', handleDisconnect);
+
+    return () => {
+      socket.off('newMessage', handleNewMessage);
+      socket.off('connect', handleConnect);
+      socket.off('disconnect', handleDisconnect);
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(fetchChannels());
     dispatch(fetchMessages());
   }, [dispatch]);
 
+  const handleRetry = () => {
+    dispatch(fetchChannels());
+    dispatch(fetchMessages());
+  };
+
   const currentChannel = channels.find(({ id }) => id === currentChannelId);
   const channelMessagesCount = messages.filter(({ channelId }) => channelId === currentChannelId).length;
+  const isLoading = channelsLoading || messagesLoading;
+  const loadError = channelsError ?? messagesError;
 
   return (
     <div className="chat-page">
       <Header />
+      {!isOnline && (
+        <div className="offline-banner">
+          <span>Соединение потеряно...</span>
+        </div>
+      )}
       <div className="main-container">
         <Channels />
         <main className="chat-area">
-          <div className="chat-header bg-white border-bottom px-3 py-3 d-flex align-items-center">
-            <span className="fw-semibold"># {currentChannel?.name ?? ''}</span>
-            <span className="text-secondary ms-2">
-              {channelMessagesCount} сообщений
-            </span>
-          </div>
-          <Messages />
-          <MessageForm />
+          {isLoading ? (
+            <div className="d-flex align-items-center justify-content-center flex-grow-1">
+              <Spinner animation="border" variant="primary" />
+            </div>
+          ) : loadError ? (
+            <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 gap-2 p-3">
+              <Alert variant="danger" className="mb-0 text-center">
+                {loadError}
+              </Alert>
+              <Button variant="primary" onClick={handleRetry}>
+                Повторить
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className="chat-header bg-white border-bottom px-3 py-3 d-flex align-items-center">
+                <span className="fw-semibold"># {currentChannel?.name ?? ''}</span>
+                <span className="text-secondary ms-2">
+                  {channelMessagesCount} сообщений
+                </span>
+              </div>
+              <Messages />
+              <MessageForm />
+            </>
+          )}
         </main>
       </div>
     </div>

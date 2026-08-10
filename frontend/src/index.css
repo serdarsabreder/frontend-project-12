@@ -26,6 +26,15 @@ body {
   height: 56px;
 }
 
+.offline-banner {
+  background-color: #fdecea;
+  color: #a94442;
+  border-bottom: 1px solid var(--border-color);
+  padding: 8px 24px;
+  font-size: 14px;
+  text-align: center;
+}
+
 .main-container {
   display: flex;
   flex: 1;

@@ -21,17 +21,55 @@ const messagesSlice = createSlice({
   name: 'messages',
   initialState: {
     messages: [],
+    loading: false,
+    error: null,
+    sending: false,
+    sendError: null,
   },
-  reducers: {},
+  reducers: {
+    addMessageReceived: (state, action) => {
+      const message = action.payload;
+      const exists = state.messages.some(({ id }) => id === message.id);
+      if (!exists) {
+        state.messages.push(message);
+      }
+    },
+    clearSendError: (state) => {
+      state.sendError = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchMessages.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchMessages.fulfilled, (state, action) => {
+        state.loading = false;
         state.messages = action.payload;
       })
+      .addCase(fetchMessages.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? 'Ошибка загрузки сообщений';
+      })
+      .addCase(addMessage.pending, (state) => {
+        state.sending = true;
+        state.sendError = null;
+      })
       .addCase(addMessage.fulfilled, (state, action) => {
-        state.messages.push(action.payload);
+        state.sending = false;
+        const message = action.payload;
+        const exists = state.messages.some(({ id }) => id === message.id);
+        if (!exists) {
+          state.messages.push(message);
+        }
+      })
+      .addCase(addMessage.rejected, (state, action) => {
+        state.sending = false;
+        state.sendError = action.error.message ?? 'Не удалось отправить сообщение';
       });
   },
 });
 
+export const { addMessageReceived, clearSendError } = messagesSlice.actions;
 export default messagesSlice.reducer;

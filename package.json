@@ -2,10 +2,11 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "Hexlet Chat",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "build": "npm --prefix frontend install && npm --prefix frontend run build",
-    "start": "npx start-server -s ./frontend/dist -p ${PORT:-5001}"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",

@@ -1,8 +1,8 @@
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Button, Form } from 'react-bootstrap';
+import { Alert, Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { addMessage } from '../slices/messagesSlice.js';
+import { addMessage, clearSendError } from '../slices/messagesSlice.js';
 
 const validationSchema = yup.object({
   body: yup.string().trim().required('Обязательное поле'),
@@ -12,6 +12,7 @@ function MessageForm() {
   const dispatch = useDispatch();
   const currentChannelId = useSelector((state) => state.channels.currentChannelId);
   const username = useSelector((state) => state.auth.username);
+  const sendError = useSelector((state) => state.messages.sendError);
 
   const formik = useFormik({
     initialValues: {
@@ -24,20 +25,34 @@ function MessageForm() {
         return;
       }
       try {
-        await dispatch(addMessage({
+        const { meta } = await dispatch(addMessage({
           body: values.body.trim(),
           channelId: currentChannelId,
           username,
         }));
-        resetForm();
+        if (meta.requestStatus === 'fulfilled') {
+          resetForm();
+        }
       } finally {
         setSubmitting(false);
       }
     },
   });
 
+  const handleChange = (e) => {
+    formik.handleChange(e);
+    if (sendError) {
+      dispatch(clearSendError());
+    }
+  };
+
   return (
     <div className="input-area bg-white border-top p-3">
+      {sendError && (
+        <Alert variant="danger" className="mb-2">
+          {sendError}
+        </Alert>
+      )}
       <Form
         noValidate
         onSubmit={formik.handleSubmit}
@@ -48,7 +63,7 @@ function MessageForm() {
           placeholder="Введите сообщение..."
           aria-label="Новое сообщение"
           value={formik.values.body}
-          onChange={formik.handleChange}
+          onChange={handleChange}
           onBlur={formik.handleBlur}
           disabled={currentChannelId === null}
         />

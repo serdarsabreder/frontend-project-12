@@ -1,10 +1,16 @@
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 
 function Messages() {
   const messages = useSelector((state) => state.messages.messages);
   const currentChannelId = useSelector((state) => state.channels.currentChannelId);
+  const bottomRef = useRef(null);
 
   const channelMessages = messages.filter(({ channelId }) => channelId === currentChannelId);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView();
+  }, [channelMessages.length]);
 
   return (
     <div className="messages-area">
@@ -18,6 +24,7 @@ function Messages() {
           </div>
         ))
       )}
+      <div ref={bottomRef} />
     </div>
   );
 }

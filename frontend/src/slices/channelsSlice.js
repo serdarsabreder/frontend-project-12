@@ -14,6 +14,8 @@ const channelsSlice = createSlice({
   initialState: {
     channels: [],
     currentChannelId: null,
+    loading: false,
+    error: null,
   },
   reducers: {
     setCurrentChannel: (state, action) => {
@@ -21,13 +23,23 @@ const channelsSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchChannels.fulfilled, (state, action) => {
-      state.channels = action.payload;
-      if (state.currentChannelId === null) {
-        const [firstChannel] = action.payload;
-        state.currentChannelId = firstChannel?.id ?? null;
-      }
-    });
+    builder
+      .addCase(fetchChannels.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchChannels.fulfilled, (state, action) => {
+        state.loading = false;
+        state.channels = action.payload;
+        if (state.currentChannelId === null) {
+          const [firstChannel] = action.payload;
+          state.currentChannelId = firstChannel?.id ?? null;
+        }
+      })
+      .addCase(fetchChannels.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? 'Ошибка загрузки каналов';
+      });
   },
 });
 
