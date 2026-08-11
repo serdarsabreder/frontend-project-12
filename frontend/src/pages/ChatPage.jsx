@@ -5,8 +5,13 @@ import Channels from '../components/Channels.jsx';
 import Header from '../components/Header.jsx';
 import MessageForm from '../components/MessageForm.jsx';
 import Messages from '../components/Messages.jsx';
-import { fetchChannels } from '../slices/channelsSlice.js';
-import { addMessageReceived, fetchMessages } from '../slices/messagesSlice.js';
+import {
+  addChannelReceived,
+  fetchChannels,
+  removeChannelReceived,
+  renameChannelReceived,
+} from '../slices/channelsSlice.js';
+import { addMessageReceived, fetchMessages, removeMessagesByChannel } from '../slices/messagesSlice.js';
 import { socket } from '../services/socket.js';
 
 function ChatPage() {
@@ -22,15 +27,27 @@ function ChatPage() {
 
   useEffect(() => {
     const handleNewMessage = (message) => dispatch(addMessageReceived(message));
+    const handleNewChannel = (channel) => dispatch(addChannelReceived(channel));
+    const handleRenameChannel = (channel) => dispatch(renameChannelReceived(channel));
+    const handleRemoveChannel = ({ id }) => {
+      dispatch(removeChannelReceived({ id }));
+      dispatch(removeMessagesByChannel(id));
+    };
     const handleConnect = () => setIsOnline(true);
     const handleDisconnect = () => setIsOnline(false);
 
     socket.on('newMessage', handleNewMessage);
+    socket.on('newChannel', handleNewChannel);
+    socket.on('renameChannel', handleRenameChannel);
+    socket.on('removeChannel', handleRemoveChannel);
     socket.on('connect', handleConnect);
     socket.on('disconnect', handleDisconnect);
 
     return () => {
       socket.off('newMessage', handleNewMessage);
+      socket.off('newChannel', handleNewChannel);
+      socket.off('renameChannel', handleRenameChannel);
+      socket.off('removeChannel', handleRemoveChannel);
       socket.off('connect', handleConnect);
       socket.off('disconnect', handleDisconnect);
     };
@@ -78,7 +95,7 @@ function ChatPage() {
           ) : (
             <>
               <div className="chat-header bg-white border-bottom px-3 py-3 d-flex align-items-center">
-                <span className="fw-semibold"># {currentChannel?.name ?? ''}</span>
+                <span className="fw-semibold channel-name"># {currentChannel?.name ?? ''}</span>
                 <span className="text-secondary ms-2">
                   {channelMessagesCount} сообщений
                 </span>

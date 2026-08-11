@@ -68,26 +68,52 @@ body {
   flex: 1;
 }
 
+.channel-item-row {
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+  transition: background-color 0.2s;
+}
+
+.channel-item-row:hover {
+  background-color: var(--selected-bg);
+}
+
 .channel-item {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   padding: 12px 16px;
   color: var(--text-secondary);
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s;
   background: none;
   border: none;
-  width: 100%;
   text-align: left;
 }
 
 .channel-item:hover {
-  background-color: var(--selected-bg);
+  background-color: transparent;
 }
 
 .channel-item.active {
   background-color: #dbeafe;
   color: var(--text-main);
   font-weight: 600;
+}
+
+.channel-menu-btn {
+  color: var(--text-secondary);
+  padding: 0 8px;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.channel-menu-btn:hover {
+  color: var(--text-main);
 }
 
 .chat-area {
@@ -99,6 +125,13 @@ body {
 
 .chat-header {
   color: var(--text-main);
+  min-width: 0;
+}
+
+.chat-header .channel-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .messages-area {
@@ -119,4 +152,6 @@ body {
 
 .message-body {
   color: var(--text-main);
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
