@@ -53,7 +53,7 @@ const messagesSlice = createSlice({
       })
       .addCase(fetchMessages.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message ?? 'Ошибка загрузки сообщений';
+        state.error = action.error.message ?? 'errors.loadMessages';
       })
       .addCase(addMessage.pending, (state) => {
         state.sending = true;
@@ -69,7 +69,7 @@ const messagesSlice = createSlice({
       })
       .addCase(addMessage.rejected, (state, action) => {
         state.sending = false;
-        state.sendError = action.error.message ?? 'Не удалось отправить сообщение';
+        state.sendError = action.error.message ?? 'errors.sendMessage';
       });
   },
 });

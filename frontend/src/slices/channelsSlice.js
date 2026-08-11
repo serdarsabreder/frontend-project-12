@@ -96,7 +96,7 @@ const channelsSlice = createSlice({
       })
       .addCase(fetchChannels.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message ?? 'Ошибка загрузки каналов';
+        state.error = action.error.message ?? 'errors.loadChannels';
       })
       .addCase(addChannel.pending, (state) => {
         state.adding = true;

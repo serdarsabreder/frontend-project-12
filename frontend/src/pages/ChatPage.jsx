@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Alert, Button, Spinner } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import Channels from '../components/Channels.jsx';
 import MessageForm from '../components/MessageForm.jsx';
 import Messages from '../components/Messages.jsx';
@@ -15,6 +16,7 @@ import { socket } from '../services/socket.js';
 
 function ChatPage() {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const [isOnline, setIsOnline] = useState(socket.connected);
   const channels = useSelector((state) => state.channels.channels);
   const channelsLoading = useSelector((state) => state.channels.loading);
@@ -71,7 +73,7 @@ function ChatPage() {
     <div className="chat-page">
       {!isOnline && (
         <div className="offline-banner">
-          <span>Соединение потеряно...</span>
+          <span>{t('chat.connectionLost')}</span>
         </div>
       )}
       <div className="main-container">
@@ -84,10 +86,10 @@ function ChatPage() {
           ) : loadError ? (
             <div className="d-flex flex-column align-items-center justify-content-center flex-grow-1 gap-2 p-3">
               <Alert variant="danger" className="mb-0 text-center">
-                {loadError}
+                {t(loadError)}
               </Alert>
               <Button variant="primary" onClick={handleRetry}>
-                Повторить
+                {t('chat.retry')}
               </Button>
             </div>
           ) : (
@@ -95,7 +97,7 @@ function ChatPage() {
               <div className="chat-header bg-white border-bottom px-3 py-3 d-flex align-items-center">
                 <span className="fw-semibold channel-name"># {currentChannel?.name ?? ''}</span>
                 <span className="text-secondary ms-2">
-                  {channelMessagesCount} сообщений
+                  {t('chat.messageCount', { count: channelMessagesCount })}
                 </span>
               </div>
               <Messages />

@@ -1,7 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 function Messages() {
+  const { t } = useTranslation();
   const messages = useSelector((state) => state.messages.messages);
   const currentChannelId = useSelector((state) => state.channels.currentChannelId);
   const bottomRef = useRef(null);
@@ -15,7 +17,7 @@ function Messages() {
   return (
     <div className="messages-area">
       {channelMessages.length === 0 ? (
-        <p className="text-secondary mb-0 text-center">Пока нет сообщений</p>
+        <p className="text-secondary mb-0 text-center">{t('chat.noMessages')}</p>
       ) : (
         channelMessages.map(({ id, username, body }) => (
           <div key={id} className="message-item">

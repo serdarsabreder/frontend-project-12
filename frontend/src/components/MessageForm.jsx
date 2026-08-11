@@ -3,14 +3,16 @@ import * as yup from 'yup';
 import leoProfanity from 'leo-profanity';
 import { Alert, Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { addMessage, clearSendError } from '../slices/messagesSlice.js';
 
 const validationSchema = yup.object({
-  body: yup.string().trim().required('Обязательное поле'),
+  body: yup.string().trim().required('modals.required'),
 });
 
 function MessageForm() {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const currentChannelId = useSelector((state) => state.channels.currentChannelId);
   const username = useSelector((state) => state.auth.username);
   const sendError = useSelector((state) => state.messages.sendError);
@@ -51,7 +53,7 @@ function MessageForm() {
     <div className="input-area bg-white border-top p-3">
       {sendError && (
         <Alert variant="danger" className="mb-2">
-          {sendError}
+          {t(sendError)}
         </Alert>
       )}
       <Form
@@ -61,8 +63,8 @@ function MessageForm() {
       >
         <Form.Control
           name="body"
-          placeholder="Введите сообщение..."
-          aria-label="Новое сообщение"
+          placeholder={t('chat.placeholder')}
+          aria-label={t('chat.newMessage')}
           value={formik.values.body}
           onChange={handleChange}
           onBlur={formik.handleBlur}
@@ -73,7 +75,7 @@ function MessageForm() {
           variant="primary"
           disabled={formik.isSubmitting || !formik.values.body.trim()}
         >
-          Отправить
+          {t('chat.send')}
         </Button>
       </Form>
     </div>

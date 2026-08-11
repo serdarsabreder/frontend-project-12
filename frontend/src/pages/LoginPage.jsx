@@ -3,18 +3,20 @@ import * as yup from 'yup';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { setCredentials } from '../slices/authSlice.js';
 import routes from '../services/routes.js';
 
 const validationSchema = yup.object({
-  username: yup.string().trim().required('Обязательное поле'),
-  password: yup.string().required('Обязательное поле'),
+  username: yup.string().trim().required('modals.required'),
+  password: yup.string().required('modals.required'),
 });
 
 function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const formik = useFormik({
     initialValues: {
@@ -28,7 +30,7 @@ function LoginPage() {
         dispatch(setCredentials(data));
         navigate(routes.chatPagePath());
       } catch {
-        setStatus('Неверные имя пользователя или пароль');
+        setStatus('login.authFailed');
       }
     },
   });
@@ -44,15 +46,15 @@ function LoginPage() {
         <Col xs={11} sm={8} md={5} lg={4}>
           <Card>
             <Card.Body className="p-4">
-              <Card.Title as="h1" className="text-center mb-4">Войти</Card.Title>
+              <Card.Title as="h1" className="text-center mb-4">{t('login.header')}</Card.Title>
               {formik.status && (
                 <Alert variant="danger" className="text-center">
-                  {formik.status}
+                  {t(formik.status)}
                 </Alert>
               )}
               <Form onSubmit={formik.handleSubmit}>
                 <Form.Group className="mb-3" controlId="username">
-                  <Form.Label>Ваш ник</Form.Label>
+                  <Form.Label>{t('login.username')}</Form.Label>
                   <Form.Control
                     type="text"
                     name="username"
@@ -63,11 +65,11 @@ function LoginPage() {
                     autoComplete="username"
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.username}
+                    {t(formik.errors.username)}
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="password">
-                  <Form.Label>Пароль</Form.Label>
+                  <Form.Label>{t('login.password')}</Form.Label>
                   <Form.Control
                     type="password"
                     name="password"
@@ -78,17 +80,17 @@ function LoginPage() {
                     autoComplete="current-password"
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.password}
+                    {t(formik.errors.password)}
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Button type="submit" variant="primary" className="w-100" disabled={formik.isSubmitting}>
-                  Войти
+                  {t('login.submit')}
                 </Button>
               </Form>
             </Card.Body>
             <Card.Footer className="text-center">
-              <span>Нет аккаунта? </span>
-              <Link to={routes.signupPagePath()}>Регистрация</Link>
+              <span>{t('login.newToChat')} </span>
+              <Link to={routes.signupPagePath()}>{t('login.signup')}</Link>
             </Card.Footer>
           </Card>
         </Col>

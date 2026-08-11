@@ -3,6 +3,7 @@ import * as yup from 'yup';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { setCredentials } from '../slices/authSlice.js';
 import routes from '../services/routes.js';
@@ -11,22 +12,23 @@ const validationSchema = yup.object({
   username: yup
     .string()
     .trim()
-    .required('Обязательное поле')
-    .min(3, 'От 3 до 20 символов')
-    .max(20, 'От 3 до 20 символов'),
+    .required('signup.required')
+    .min(3, 'signup.usernameConstraints')
+    .max(20, 'signup.usernameConstraints'),
   password: yup
     .string()
     .trim()
-    .required('Обязательное поле')
-    .min(6, 'Не менее 6 символов'),
+    .required('signup.required')
+    .min(6, 'signup.passMin'),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref('password')], 'Пароли должны совпадать'),
+    .oneOf([yup.ref('password')], 'signup.mustMatch'),
 });
 
 function SignupPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const formik = useFormik({
     initialValues: {
@@ -45,9 +47,9 @@ function SignupPage() {
         navigate(routes.chatPagePath());
       } catch (err) {
         if (err?.response?.status === 409) {
-          setStatus('Такой пользователь уже существует');
+          setStatus('signup.alreadyExists');
         } else {
-          setStatus('Не удалось зарегистрироваться');
+          setStatus('signup.registrationError');
         }
       }
     },
@@ -64,15 +66,15 @@ function SignupPage() {
         <Col xs={11} sm={8} md={5} lg={4}>
           <Card>
             <Card.Body className="p-4">
-              <Card.Title as="h1" className="text-center mb-4">Регистрация</Card.Title>
+              <Card.Title as="h1" className="text-center mb-4">{t('signup.header')}</Card.Title>
               {formik.status && (
                 <Alert variant="danger" className="text-center">
-                  {formik.status}
+                  {t(formik.status)}
                 </Alert>
               )}
               <Form onSubmit={formik.handleSubmit}>
                 <Form.Group className="mb-3" controlId="username">
-                  <Form.Label>Имя пользователя</Form.Label>
+                  <Form.Label>{t('signup.username')}</Form.Label>
                   <Form.Control
                     type="text"
                     name="username"
@@ -83,11 +85,11 @@ function SignupPage() {
                     autoComplete="username"
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.username}
+                    {t(formik.errors.username)}
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="password">
-                  <Form.Label>Пароль</Form.Label>
+                  <Form.Label>{t('signup.password')}</Form.Label>
                   <Form.Control
                     type="password"
                     name="password"
@@ -98,11 +100,11 @@ function SignupPage() {
                     autoComplete="new-password"
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.password}
+                    {t(formik.errors.password)}
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Form.Group className="mb-3" controlId="confirmPassword">
-                  <Form.Label>Подтвердите пароль</Form.Label>
+                  <Form.Label>{t('signup.confirm')}</Form.Label>
                   <Form.Control
                     type="password"
                     name="confirmPassword"
@@ -113,11 +115,11 @@ function SignupPage() {
                     autoComplete="new-password"
                   />
                   <Form.Control.Feedback type="invalid">
-                    {formik.errors.confirmPassword}
+                    {t(formik.errors.confirmPassword)}
                   </Form.Control.Feedback>
                 </Form.Group>
                 <Button type="submit" variant="primary" className="w-100" disabled={formik.isSubmitting}>
-                  Зарегистрироваться
+                  {t('signup.submit')}
                 </Button>
               </Form>
             </Card.Body>

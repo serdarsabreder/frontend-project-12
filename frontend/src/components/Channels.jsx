@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Dropdown } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import AddChannelModal from './AddChannelModal.jsx';
 import RemoveChannelModal from './RemoveChannelModal.jsx';
 import RenameChannelModal from './RenameChannelModal.jsx';
@@ -8,6 +9,7 @@ import { setCurrentChannel } from '../slices/channelsSlice.js';
 
 function Channels() {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const channels = useSelector((state) => state.channels.channels);
   const currentChannelId = useSelector((state) => state.channels.currentChannelId);
   const [modal, setModal] = useState({ type: null, channel: null });
@@ -21,11 +23,11 @@ function Channels() {
   return (
     <aside className="sidebar">
       <div className="sidebar-header d-flex align-items-center gap-2 px-3 py-3">
-        <span className="fw-semibold">Каналы</span>
+        <span className="fw-semibold">{t('channels.channels')}</span>
         <Button
           variant="link"
           className="add-channel-btn p-0 ms-auto"
-          aria-label="Добавить канал"
+          aria-label={t('modals.add')}
           onClick={() => setModal({ type: 'adding' })}
         >
           +
@@ -47,21 +49,21 @@ function Channels() {
                   variant="link"
                   bsPrefix="channel-menu-btn"
                   id={`channel-menu-${id}`}
-                  aria-label="Управление каналом"
+                  aria-label={t('channels.menu')}
                 >
-                  <span className="visually-hidden">Управление каналом</span>
+                  <span className="visually-hidden">{t('channels.menu')}</span>
                   ⋮
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item
                     onClick={() => setModal({ type: 'renaming', channel: { id, name } })}
                   >
-                    Переименовать
+                    {t('channels.rename')}
                   </Dropdown.Item>
                   <Dropdown.Item
                     onClick={() => setModal({ type: 'removing', channel: { id, name } })}
                   >
-                    Удалить
+                    {t('channels.remove')}
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
