@@ -1,6 +1,6 @@
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import leoProfanity from 'leo-profanity';
+import leoProfanity from '../services/profanity.js';
 import { Alert, Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';

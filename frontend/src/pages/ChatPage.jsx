@@ -18,7 +18,7 @@ import { socket } from '../services/socket.js';
 function ChatPage() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const [isOnline, setIsOnline] = useState(socket.connected);
+  const [isOnline, setIsOnline] = useState(true);
   const channels = useSelector((state) => state.channels.channels);
   const channelsLoading = useSelector((state) => state.channels.loading);
   const channelsError = useSelector((state) => state.channels.error);

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import leoProfanity from 'leo-profanity';
+import leoProfanity from '../services/profanity.js';
 import PropTypes from 'prop-types';
 import { Button, Form } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
