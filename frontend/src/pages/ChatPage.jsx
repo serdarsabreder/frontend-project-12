@@ -89,7 +89,7 @@ function ChatPage() {
     <div className="chat-page">
       {!isOnline && (
         <div className="offline-banner">
-          <span>{t('chat.connectionLost')}</span>
+          <span>{t('errors.network')}</span>
         </div>
       )}
       <div className="main-container">

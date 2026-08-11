@@ -44,7 +44,6 @@ const ru = {
       newMessage: 'Новое сообщение',
       placeholder: 'Введите сообщение...',
       noMessages: 'Пока нет сообщений',
-      connectionLost: 'Соединение потеряно...',
       retry: 'Повторить',
     },
     signup: {
