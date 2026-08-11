@@ -2,6 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import ModalWindow from './ModalWindow.jsx';
 import { removeChannel } from '../slices/channelsSlice.js';
 
@@ -16,6 +17,7 @@ function RemoveChannelModal({ channel, onClose }) {
     try {
       const { meta } = await dispatch(removeChannel(channel.id));
       if (meta.requestStatus === 'fulfilled') {
+        toast.success('Канал удалён');
         onClose();
       } else {
         setError(meta.error?.message ?? 'Не удалось удалить канал');

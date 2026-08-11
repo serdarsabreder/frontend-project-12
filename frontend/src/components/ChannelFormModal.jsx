@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import leoProfanity from 'leo-profanity';
 import PropTypes from 'prop-types';
 import { Button, Form } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
@@ -9,8 +10,8 @@ import ModalWindow from './ModalWindow.jsx';
 function ChannelFormModal({
   title,
   submitText,
-  initialName,
-  excludeId,
+  initialName = '',
+  excludeId = null,
   onClose,
   onSubmit,
 }) {
@@ -36,7 +37,7 @@ function ChannelFormModal({
     validationSchema,
     onSubmit: async (values, { setSubmitting, setStatus }) => {
       try {
-        const { meta } = await onSubmit(values.name.trim());
+        const { meta } = await onSubmit(leoProfanity.clean(values.name.trim()));
         if (meta.requestStatus === 'fulfilled') {
           onClose();
         } else {
@@ -98,11 +99,6 @@ ChannelFormModal.propTypes = {
   excludeId: PropTypes.string,
   onClose: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
-};
-
-ChannelFormModal.defaultProps = {
-  initialName: '',
-  excludeId: null,
 };
 
 export default ChannelFormModal;

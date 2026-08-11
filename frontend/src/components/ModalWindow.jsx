@@ -3,12 +3,14 @@ import { Modal } from 'react-bootstrap';
 
 function ModalWindow({ title, onClose, children }) {
   return (
-    <Modal show onHide={onClose} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>{title}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>{children}</Modal.Body>
-    </Modal>
+    <div data-testid="modal">
+      <Modal show onHide={onClose} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{children}</Modal.Body>
+      </Modal>
+    </div>
   );
 }
 

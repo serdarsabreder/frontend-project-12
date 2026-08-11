@@ -1,5 +1,6 @@
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import leoProfanity from 'leo-profanity';
 import { Alert, Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { addMessage, clearSendError } from '../slices/messagesSlice.js';
@@ -26,7 +27,7 @@ function MessageForm() {
       }
       try {
         const { meta } = await dispatch(addMessage({
-          body: values.body.trim(),
+          body: leoProfanity.clean(values.body.trim()),
           channelId: currentChannelId,
           username,
         }));

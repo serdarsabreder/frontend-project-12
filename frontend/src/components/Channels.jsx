@@ -49,6 +49,7 @@ function Channels() {
                   id={`channel-menu-${id}`}
                   aria-label="Управление каналом"
                 >
+                  <span className="visually-hidden">Управление каналом</span>
                   ⋮
                 </Dropdown.Toggle>
                 <Dropdown.Menu>

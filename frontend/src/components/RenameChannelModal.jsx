@@ -1,12 +1,19 @@
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import ChannelFormModal from './ChannelFormModal.jsx';
 import { renameChannel } from '../slices/channelsSlice.js';
 
 function RenameChannelModal({ channel, onClose }) {
   const dispatch = useDispatch();
 
-  const handleSubmit = (name) => dispatch(renameChannel({ id: channel.id, name }));
+  const handleSubmit = async (name) => {
+    const { meta } = await dispatch(renameChannel({ id: channel.id, name }));
+    if (meta.requestStatus === 'fulfilled') {
+      toast.success('Канал переименован');
+    }
+    return { meta };
+  };
 
   return (
     <ChannelFormModal

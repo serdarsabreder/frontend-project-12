@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Alert, Button, Spinner } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Channels from '../components/Channels.jsx';
-import Header from '../components/Header.jsx';
 import MessageForm from '../components/MessageForm.jsx';
 import Messages from '../components/Messages.jsx';
 import {
@@ -70,7 +69,6 @@ function ChatPage() {
 
   return (
     <div className="chat-page">
-      <Header />
       {!isOnline && (
         <div className="offline-banner">
           <span>Соединение потеряно...</span>
