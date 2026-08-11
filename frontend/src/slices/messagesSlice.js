@@ -51,9 +51,9 @@ const messagesSlice = createSlice({
         state.loading = false;
         state.messages = action.payload;
       })
-      .addCase(fetchMessages.rejected, (state, action) => {
+      .addCase(fetchMessages.rejected, (state) => {
         state.loading = false;
-        state.error = action.error.message ?? 'errors.loadMessages';
+        state.error = 'errors.loadMessages';
       })
       .addCase(addMessage.pending, (state) => {
         state.sending = true;
@@ -67,9 +67,9 @@ const messagesSlice = createSlice({
           state.messages.push(message);
         }
       })
-      .addCase(addMessage.rejected, (state, action) => {
+      .addCase(addMessage.rejected, (state) => {
         state.sending = false;
-        state.sendError = action.error.message ?? 'errors.sendMessage';
+        state.sendError = 'errors.sendMessage';
       });
   },
 });

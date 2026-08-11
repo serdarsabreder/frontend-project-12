@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Alert, Button, Spinner } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import Channels from '../components/Channels.jsx';
 import MessageForm from '../components/MessageForm.jsx';
 import Messages from '../components/Messages.jsx';
@@ -35,7 +36,10 @@ function ChatPage() {
       dispatch(removeMessagesByChannel(id));
     };
     const handleConnect = () => setIsOnline(true);
-    const handleDisconnect = () => setIsOnline(false);
+    const handleDisconnect = () => {
+      setIsOnline(false);
+      toast.error(t('errors.network'));
+    };
 
     socket.on('newMessage', handleNewMessage);
     socket.on('newChannel', handleNewChannel);
@@ -52,7 +56,19 @@ function ChatPage() {
       socket.off('connect', handleConnect);
       socket.off('disconnect', handleDisconnect);
     };
-  }, [dispatch]);
+  }, [dispatch, t]);
+
+  useEffect(() => {
+    if (channelsError) {
+      toast.error(t(channelsError));
+    }
+  }, [channelsError, t]);
+
+  useEffect(() => {
+    if (messagesError) {
+      toast.error(t(messagesError));
+    }
+  }, [messagesError, t]);
 
   useEffect(() => {
     dispatch(fetchChannels());
