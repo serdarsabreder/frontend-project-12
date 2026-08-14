@@ -1,14 +1,10 @@
 import { useFormik } from 'formik';
-import * as yup from 'yup';
 import leoProfanity from '../services/profanity.js';
 import { Alert, Button, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { addMessage, clearSendError } from '../slices/messagesSlice.js';
-
-const validationSchema = yup.object({
-  body: yup.string().trim().required('modals.required'),
-});
+import { messageValidationSchema } from '../utils/validation.js';
 
 function MessageForm() {
   const dispatch = useDispatch();
@@ -17,29 +13,31 @@ function MessageForm() {
   const username = useSelector((state) => state.auth.username);
   const sendError = useSelector((state) => state.messages.sendError);
 
+  const handleSubmit = async (values, { resetForm, setSubmitting }) => {
+    if (currentChannelId === null) {
+      setSubmitting(false);
+      return;
+    }
+    try {
+      const { meta } = await dispatch(addMessage({
+        body: leoProfanity.clean(values.body.trim()),
+        channelId: currentChannelId,
+        username,
+      }));
+      if (meta.requestStatus === 'fulfilled') {
+        resetForm();
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
       body: '',
     },
-    validationSchema,
-    onSubmit: async (values, { resetForm, setSubmitting }) => {
-      if (currentChannelId === null) {
-        setSubmitting(false);
-        return;
-      }
-      try {
-        const { meta } = await dispatch(addMessage({
-          body: leoProfanity.clean(values.body.trim()),
-          channelId: currentChannelId,
-          username,
-        }));
-        if (meta.requestStatus === 'fulfilled') {
-          resetForm();
-        }
-      } finally {
-        setSubmitting(false);
-      }
-    },
+    validationSchema: messageValidationSchema,
+    onSubmit: handleSubmit,
   });
 
   const handleChange = (e) => {

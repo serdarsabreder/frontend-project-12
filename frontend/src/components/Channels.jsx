@@ -26,7 +26,7 @@ function Channels() {
         <span className="fw-semibold">{t('channels.channels')}</span>
         <Button
           variant="link"
-          className="add-channel-btn p-0 ms-auto"
+          className="text-secondary p-0 ms-auto text-decoration-none"
           aria-label={t('modals.add')}
           onClick={() => setModal({ type: 'adding' })}
         >
@@ -47,7 +47,7 @@ function Channels() {
               <Dropdown align="end">
                 <Dropdown.Toggle
                   variant="link"
-                  bsPrefix="channel-menu-btn"
+                  className="text-secondary"
                   id={`channel-menu-${id}`}
                   aria-label={t('channels.menu')}
                 >

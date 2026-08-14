@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
-import * as yup from 'yup';
 import leoProfanity from '../services/profanity.js';
 import PropTypes from 'prop-types';
 import { Button, Form } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import ModalWindow from './ModalWindow.jsx';
+import { getChannelValidationSchema } from '../utils/validation.js';
 
 function ChannelFormModal({
   title,
@@ -24,31 +24,23 @@ function ChannelFormModal({
     .filter(({ id }) => id !== excludeId)
     .map(({ name }) => name);
 
-  const validationSchema = yup.object({
-    name: yup
-      .string()
-      .trim()
-      .required('modals.required')
-      .min(3, 'modals.min')
-      .max(20, 'modals.max')
-      .test('unique', 'modals.uniq', (value) => !existingNames.includes(value)),
-  });
+  const handleSubmit = async (values, { setSubmitting, setStatus }) => {
+    try {
+      const { meta } = await onSubmit(leoProfanity.clean(values.name.trim()));
+      if (meta.requestStatus === 'fulfilled') {
+        onClose();
+      } else {
+        setStatus(meta.error?.message ?? 'errors.unknown');
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   const formik = useFormik({
     initialValues: { name: initialName },
-    validationSchema,
-    onSubmit: async (values, { setSubmitting, setStatus }) => {
-      try {
-        const { meta } = await onSubmit(leoProfanity.clean(values.name.trim()));
-        if (meta.requestStatus === 'fulfilled') {
-          onClose();
-        } else {
-          setStatus(meta.error?.message ?? 'errors.unknown');
-        }
-      } finally {
-        setSubmitting(false);
-      }
-    },
+    validationSchema: getChannelValidationSchema(existingNames),
+    onSubmit: handleSubmit,
   });
 
   useEffect(() => {

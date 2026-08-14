@@ -1,5 +1,4 @@
 import { useFormik } from 'formik';
-import * as yup from 'yup';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -7,28 +6,29 @@ import { useTranslation } from 'react-i18next';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { setCredentials } from '../slices/authSlice.js';
 import routes from '../services/routes.js';
-
-const validationSchema = yup.object({
-  username: yup
-    .string()
-    .trim()
-    .required('signup.required')
-    .min(3, 'signup.usernameConstraints')
-    .max(20, 'signup.usernameConstraints'),
-  password: yup
-    .string()
-    .trim()
-    .required('signup.required')
-    .min(6, 'signup.passMin'),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref('password')], 'signup.mustMatch'),
-});
+import { signupValidationSchema } from '../utils/validation.js';
 
 function SignupPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const handleSubmit = async (values, { setStatus }) => {
+    try {
+      const { data } = await axios.post(routes.signupPath(), {
+        username: values.username,
+        password: values.password,
+      });
+      dispatch(setCredentials(data));
+      navigate(routes.chatPagePath());
+    } catch (err) {
+      if (err?.response?.status === 409) {
+        setStatus('signup.alreadyExists');
+      } else {
+        setStatus('signup.registrationError');
+      }
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -36,23 +36,8 @@ function SignupPage() {
       password: '',
       confirmPassword: '',
     },
-    validationSchema,
-    onSubmit: async (values, { setStatus }) => {
-      try {
-        const { data } = await axios.post(routes.signupPath(), {
-          username: values.username,
-          password: values.password,
-        });
-        dispatch(setCredentials(data));
-        navigate(routes.chatPagePath());
-      } catch (err) {
-        if (err?.response?.status === 409) {
-          setStatus('signup.alreadyExists');
-        } else {
-          setStatus('signup.registrationError');
-        }
-      }
-    },
+    validationSchema: signupValidationSchema,
+    onSubmit: handleSubmit,
   });
 
   const handleChange = (e) => {

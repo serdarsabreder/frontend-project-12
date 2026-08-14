@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npm --prefix frontend install && npm --prefix frontend run build",
-    "start": "node server.js"
+    "start": "start-server -s frontend/dist"
   },
   "repository": {
     "type": "git",

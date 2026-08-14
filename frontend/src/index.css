@@ -50,17 +50,6 @@ body {
   flex-direction: column;
 }
 
-.add-channel-btn {
-  color: var(--text-secondary);
-  font-size: 20px;
-  line-height: 1;
-  text-decoration: none;
-}
-
-.add-channel-btn:hover {
-  color: var(--text-main);
-}
-
 .channels-list {
   list-style: none;
   margin: 0;
@@ -103,18 +92,6 @@ body {
   background-color: #dbeafe;
   color: var(--text-main);
   font-weight: 600;
-}
-
-.channel-menu-btn {
-  color: var(--text-secondary);
-  padding: 0 8px;
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.channel-menu-btn:hover {
-  color: var(--text-main);
 }
 
 .chat-area {

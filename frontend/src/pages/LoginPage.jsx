@@ -1,5 +1,4 @@
 import { useFormik } from 'formik';
-import * as yup from 'yup';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,32 +6,30 @@ import { useTranslation } from 'react-i18next';
 import { Alert, Button, Card, Col, Container, Form, Row } from 'react-bootstrap';
 import { setCredentials } from '../slices/authSlice.js';
 import routes from '../services/routes.js';
-
-const validationSchema = yup.object({
-  username: yup.string().trim().required('modals.required'),
-  password: yup.string().required('modals.required'),
-});
+import { loginValidationSchema } from '../utils/validation.js';
 
 function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+  const handleSubmit = async (values, { setStatus }) => {
+    try {
+      const { data } = await axios.post(routes.loginPath(), values);
+      dispatch(setCredentials(data));
+      navigate(routes.chatPagePath());
+    } catch {
+      setStatus('login.authFailed');
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
       username: '',
       password: '',
     },
-    validationSchema,
-    onSubmit: async (values, { setStatus }) => {
-      try {
-        const { data } = await axios.post(routes.loginPath(), values);
-        dispatch(setCredentials(data));
-        navigate(routes.chatPagePath());
-      } catch {
-        setStatus('login.authFailed');
-      }
-    },
+    validationSchema: loginValidationSchema,
+    onSubmit: handleSubmit,
   });
 
   const handleChange = (e) => {

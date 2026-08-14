@@ -1,7 +1,9 @@
 import Rollbar from 'rollbar';
 
-const rollbarConfig = {
-  accessToken: 'dfbfbd1fdf5f40c6bc49d15cc50e1b0d',
+const accessToken = import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN;
+
+const rollbarConfig = accessToken ? {
+  accessToken,
   captureUncaught: true,
   captureUnhandledRejections: true,
   environment: import.meta.env.MODE,
@@ -12,9 +14,9 @@ const rollbarConfig = {
       },
     },
   },
-};
+} : null;
 
-const rollbar = new Rollbar(rollbarConfig);
+const rollbar = accessToken ? new Rollbar(rollbarConfig) : null;
 
 export default rollbar;
 export { rollbarConfig };
